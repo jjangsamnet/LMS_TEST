@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.solve-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const quizId = btn.dataset.quizId;
-                    alert(`"${quizzes.find(q => q.id == quizId).title}" 문항 풀이 페이지로 이동합니다.`);
+                    window.location.href = `solve-quiz.html?id=${quizId}`;
                 });
             });
         }
