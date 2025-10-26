@@ -29,6 +29,23 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 3, text: '3번 문제: JavaScript의 비동기 처리 방식에 대해 설명하시오.' }
     ];
 
+    // 관리자 계정 초기화 함수
+    function initializeAdmin() {
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        // 'admin' 계정이 없는 경우에만 생성
+        if (!users.some(user => user.email === 'admin')) {
+            const adminUser = {
+                name: '관리자',
+                email: 'admin',
+                password: 'admin' // 실제 운영 환경에서는 보안을 위해 더 복잡한 비밀번호를 사용해야 합니다.
+            };
+            users.push(adminUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            console.log('기본 관리자 계정이 생성되었습니다. (ID: admin, PW: admin)');
+        }
+    }
+
+
     function renderQuestions() {
         questionListUl.innerHTML = ''; // 기존 목록 초기화
         questions.forEach(q => {
@@ -161,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 초기 화면 렌더링
+    initializeAdmin(); // 관리자 계정 확인 및 생성
     updateHeader();
     renderQuestions();
 
