@@ -39,25 +39,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="form-group options-group">
                     <label>객관식 보기 (정답에 체크하세요)</label>
-                    <div class="option-item">
+                    <div class="option-item" data-option-index="0">
                         <input type="radio" name="answer-${questionId}" id="answer-${questionId}-1" value="0" required>
-                        <input type="text" name="option-${questionId}" placeholder="보기 1" required>
+                        <div class="option-content">
+                            <input type="text" name="option-text-${questionId}" placeholder="보기 1 (텍스트 또는 Ctrl+V로 이미지)" class="option-text-input">
+                            <div class="option-image-preview" data-option-id="${questionId}-0"></div>
+                        </div>
                     </div>
-                    <div class="option-item">
+                    <div class="option-item" data-option-index="1">
                         <input type="radio" name="answer-${questionId}" id="answer-${questionId}-2" value="1">
-                        <input type="text" name="option-${questionId}" placeholder="보기 2" required>
+                        <div class="option-content">
+                            <input type="text" name="option-text-${questionId}" placeholder="보기 2 (텍스트 또는 Ctrl+V로 이미지)" class="option-text-input">
+                            <div class="option-image-preview" data-option-id="${questionId}-1"></div>
+                        </div>
                     </div>
-                    <div class="option-item">
+                    <div class="option-item" data-option-index="2">
                         <input type="radio" name="answer-${questionId}" id="answer-${questionId}-3" value="2">
-                        <input type="text" name="option-${questionId}" placeholder="보기 3" required>
+                        <div class="option-content">
+                            <input type="text" name="option-text-${questionId}" placeholder="보기 3 (텍스트 또는 Ctrl+V로 이미지)" class="option-text-input">
+                            <div class="option-image-preview" data-option-id="${questionId}-2"></div>
+                        </div>
                     </div>
-                    <div class="option-item">
+                    <div class="option-item" data-option-index="3">
                         <input type="radio" name="answer-${questionId}" id="answer-${questionId}-4" value="3">
-                        <input type="text" name="option-${questionId}" placeholder="보기 4" required>
+                        <div class="option-content">
+                            <input type="text" name="option-text-${questionId}" placeholder="보기 4 (텍스트 또는 Ctrl+V로 이미지)" class="option-text-input">
+                            <div class="option-image-preview" data-option-id="${questionId}-3"></div>
+                        </div>
                     </div>
-                    <div class="option-item">
+                    <div class="option-item" data-option-index="4">
                         <input type="radio" name="answer-${questionId}" id="answer-${questionId}-5" value="4">
-                        <input type="text" name="option-${questionId}" placeholder="보기 5" required>
+                        <div class="option-content">
+                            <input type="text" name="option-text-${questionId}" placeholder="보기 5 (텍스트 또는 Ctrl+V로 이미지)" class="option-text-input">
+                            <div class="option-image-preview" data-option-id="${questionId}-4"></div>
+                        </div>
                     </div>
                 </div>
                 <button type="button" class="btn-remove-question" data-question-id="${questionId}">문제 삭제</button>
@@ -144,6 +159,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 reader.readAsDataURL(file);
             }
         });
+
+        // 보기 이미지 붙여넣기 기능
+        const optionItems = questionBlock.querySelectorAll('.option-item');
+        optionItems.forEach((optionItem) => {
+            const optionPreview = optionItem.querySelector('.option-image-preview');
+
+            // 보기 이미지 표시 함수
+            function displayOptionImage(imageData) {
+                optionPreview.innerHTML = `
+                    <img src="${imageData}" alt="보기 이미지">
+                    <button type="button" class="btn-remove-option-image">×</button>
+                `;
+
+                // 이미지 제거 버튼
+                optionPreview.querySelector('.btn-remove-option-image').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    optionPreview.innerHTML = '';
+                });
+            }
+
+            // 보기 아이템에 붙여넣기 이벤트
+            optionItem.addEventListener('paste', (e) => {
+                const items = e.clipboardData?.items;
+                if (!items) return;
+
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+
+                    if (item.type.indexOf('image') !== -1) {
+                        e.preventDefault();
+
+                        const blob = item.getAsFile();
+                        const reader = new FileReader();
+
+                        reader.onload = (event) => {
+                            displayOptionImage(event.target.result);
+                        };
+
+                        reader.readAsDataURL(blob);
+                        break;
+                    }
+                }
+            });
+        });
     };
 
     // '문제 추가' 버튼 클릭 이벤트
@@ -195,17 +254,32 @@ document.addEventListener('DOMContentLoaded', () => {
         questionBlocks.forEach((block, index) => {
             const questionId = block.dataset.questionId;
             const questionText = block.querySelector('textarea[name="question-text"]').value;
-            const optionInputs = block.querySelectorAll('.option-item input[type="text"]');
-            const options = Array.from(optionInputs).map(input => input.value);
+
+            // 보기 데이터 수집 (텍스트와 이미지)
+            const optionItems = block.querySelectorAll('.option-item');
+            const options = [];
+
+            optionItems.forEach((optionItem) => {
+                const textInput = optionItem.querySelector('.option-text-input');
+                const imagePreview = optionItem.querySelector('.option-image-preview img');
+
+                options.push({
+                    text: textInput.value.trim(),
+                    image: imagePreview ? imagePreview.src : null
+                });
+            });
 
             // 정답 라디오 버튼에서 선택된 값 가져오기
             const selectedAnswer = block.querySelector(`input[name="answer-${questionId}"]:checked`);
 
-            // 이미지 가져오기
+            // 문제 이미지 가져오기
             const imagePreview = block.querySelector('.image-preview img');
             const imageData = imagePreview ? imagePreview.src : null;
 
-            if (!questionText.trim() || options.some(opt => !opt.trim())) {
+            // 유효성 검사: 각 보기에 텍스트나 이미지가 있어야 함
+            const hasValidOptions = options.every(opt => opt.text || opt.image);
+
+            if (!questionText.trim() || !hasValidOptions) {
                 isValid = false;
             }
 
@@ -221,8 +295,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 id: index + 1,
                 text: questionText,
                 image: imageData, // Base64 이미지 데이터
-                options: options,
-                answer: options[answerIndex], // 선택된 정답
+                options: options, // { text: string, image: string|null }[] 형태
+                answer: options[answerIndex], // 선택된 정답 (객체)
                 answerIndex: answerIndex // 정답의 인덱스
             });
         });

@@ -796,9 +796,9 @@ main {
 
 .option-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--spacing-sm);
-    padding: var(--spacing-sm);
+    padding: var(--spacing-md);
     background: white;
     border-radius: var(--radius-md);
     border: 2px solid var(--border-color);
@@ -815,19 +815,71 @@ main {
     height: 20px;
     cursor: pointer;
     flex-shrink: 0;
+    margin-top: 0.5rem;
 }
 
-.option-item input[type="text"] {
+.option-content {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.option-text-input {
+    width: 100%;
     border: none;
     background: transparent;
     padding: var(--spacing-xs);
     font-size: 0.95rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transition-base);
 }
 
-.option-item input[type="text"]:focus {
+.option-text-input:focus {
     outline: none;
-    box-shadow: none;
+    border-bottom-color: var(--primary-color);
+}
+
+.option-text-input::placeholder {
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+.option-image-preview {
+    position: relative;
+}
+
+.option-image-preview img {
+    max-width: 100%;
+    max-height: 150px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    display: block;
+}
+
+.btn-remove-option-image {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    width: 24px;
+    height: 24px;
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.25rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-remove-option-image:hover {
+    background: #e11d48;
+    transform: scale(1.1);
 }
 
 /* 이미지 업로드 영역 */
