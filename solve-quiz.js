@@ -181,79 +181,37 @@ document.addEventListener('DOMContentLoaded', () => {
         showResult();
     });
 
-    // 결과 표시
+    // 결과 표시 (제출 완료 메시지)
     function showResult() {
-        let correctCount = 0;
+        // 답안을 localStorage에 저장 (선택사항)
+        const submission = {
+            quizId: quiz.id,
+            quizTitle: quiz.title,
+            userId: currentUser.email,
+            userName: currentUser.name,
+            answers: userAnswers,
+            submittedAt: new Date().toISOString()
+        };
 
-        quiz.questions.forEach((question, index) => {
-            if (userAnswers[index] === question.answerIndex) {
-                correctCount++;
-            }
-        });
-
-        const score = Math.round((correctCount / quiz.questions.length) * 100);
+        // 제출 기록 저장
+        const submissions = JSON.parse(localStorage.getItem('submissions')) || [];
+        submissions.push(submission);
+        localStorage.setItem('submissions', JSON.stringify(submissions));
 
         let resultHTML = `
-            <div class="result-card">
-                <h2>채점 결과</h2>
-                <div class="score-display">
-                    <div class="score-circle">
-                        <span class="score-number">${score}</span>
-                        <span class="score-label">점</span>
-                    </div>
-                    <div class="score-detail">
-                        <p>정답: <strong>${correctCount}</strong> / ${quiz.questions.length}</p>
-                        <p>오답: <strong>${quiz.questions.length - correctCount}</strong></p>
-                    </div>
+            <div class="result-card submit-success">
+                <div class="success-icon">✓</div>
+                <h2>문항 제출이 되었습니다</h2>
+                <p class="success-message">수고하셨습니다.</p>
+
+                <div class="submit-info">
+                    <p><strong>문항지:</strong> ${quiz.title}</p>
+                    <p><strong>제출자:</strong> ${currentUser.name}</p>
+                    <p><strong>제출 시간:</strong> ${new Date().toLocaleString('ko-KR')}</p>
                 </div>
 
-                <div class="result-list">
-                    <h3>문제별 결과</h3>
-        `;
-
-        quiz.questions.forEach((question, index) => {
-            const userAnswerIndex = userAnswers[index];
-            const isCorrect = userAnswerIndex === question.answerIndex;
-            const userAnswerOption = userAnswerIndex !== null ? question.options[userAnswerIndex] : null;
-            const correctAnswerOption = question.options[question.answerIndex];
-
-            resultHTML += `
-                <div class="result-item ${isCorrect ? 'correct' : 'incorrect'}">
-                    <div class="result-header">
-                        <span class="result-number">문제 ${index + 1}</span>
-                        <span class="result-badge ${isCorrect ? 'badge-correct' : 'badge-incorrect'}">
-                            ${isCorrect ? '정답' : '오답'}
-                        </span>
-                    </div>
-                    <div class="result-body">
-                        ${question.text ? `<p class="result-question">${question.text}</p>` : ''}
-                        ${question.image ? `<img src="${question.image}" alt="문제 이미지" class="result-question-image">` : ''}
-
-                        <div class="result-answers">
-                            ${userAnswerIndex !== null ? `
-                                <p class="user-answer ${isCorrect ? 'correct-answer' : 'wrong-answer'}">
-                                    내 답: ${userAnswerOption.text || '[이미지]'}
-                                    ${userAnswerOption.image ? `<img src="${userAnswerOption.image}" class="answer-image-small">` : ''}
-                                </p>
-                            ` : '<p class="no-answer">답변하지 않음</p>'}
-
-                            ${!isCorrect ? `
-                                <p class="correct-answer-display">
-                                    정답: ${correctAnswerOption.text || '[이미지]'}
-                                    ${correctAnswerOption.image ? `<img src="${correctAnswerOption.image}" class="answer-image-small">` : ''}
-                                </p>
-                            ` : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-
-        resultHTML += `
-                </div>
                 <div class="result-actions">
-                    <button type="button" class="btn btn-primary" onclick="location.reload()">다시 풀기</button>
-                    <a href="index.html" class="btn btn-secondary">메인으로</a>
+                    <a href="index.html" class="btn btn-primary">메인으로 돌아가기</a>
                 </div>
             </div>
         `;
