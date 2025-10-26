@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS TEST - 문항 출제</title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>LMS TEST - 문항 출제</h1>
+            <nav id="header-nav" aria-label="주요">
+                <a href="admin.html">관리자 페이지로 돌아가기</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" id="main-content">
+        <form id="create-quiz-form">
+            <div class="form-group">
+                <label for="quiz-title">문항 제목</label>
+                <input type="text" id="quiz-title" name="quiz-title" required>
+            </div>
+
+            <div id="questions-container">
+                <!-- 문제 필드가 여기에 동적으로 추가됩니다. -->
+            </div>
+
+            <div class="form-actions">
+                <button type="button" id="add-question-btn" class="btn">문제 추가</button>
+                <button type="submit" class="btn-submit">문항 저장</button>
+            </div>
+        </form>
+    </main>
+
+    <!-- 문제 템플릿 -->
+    <template id="question-template">
+        <!-- 템플릿 내용은 JS에서 사용됩니다. -->
+    </template>
+
+    <script src="create-quiz.js"></script>
+</body>
+</html>
