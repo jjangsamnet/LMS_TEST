@@ -6,10 +6,9 @@ body {
     color: #333;
 }
 
-header {
+header .container {
     background-color: #4a69bd;
     color: white;
-    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
