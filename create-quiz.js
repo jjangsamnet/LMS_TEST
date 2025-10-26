@@ -27,11 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <legend>문제 ${questionCounter}</legend>
                 <div class="form-group">
                     <label for="question-text-${questionId}">문제 내용</label>
-                    <textarea id="question-text-${questionId}" name="question-text" rows="3" required></textarea>
+                    <textarea id="question-text-${questionId}" name="question-text" rows="3" required placeholder="문제 내용을 입력하세요"></textarea>
                 </div>
                 <div class="form-group">
                     <label for="question-image-${questionId}">이미지 첨부 (선택사항)</label>
-                    <input type="file" id="question-image-${questionId}" name="question-image" accept="image/*" class="file-input">
+                    <div class="image-upload-area">
+                        <input type="file" id="question-image-${questionId}" name="question-image" accept="image/*" class="file-input">
+                        <div class="paste-hint">💡 Ctrl+V를 눌러 캡처한 이미지를 붙여넣을 수 있습니다</div>
+                    </div>
                     <div class="image-preview" id="preview-${questionId}"></div>
                 </div>
                 <div class="form-group options-group">
@@ -65,22 +68,78 @@ document.addEventListener('DOMContentLoaded', () => {
         // 이미지 미리보기 기능 추가
         const imageInput = questionBlock.querySelector(`#question-image-${questionId}`);
         const preview = questionBlock.querySelector(`#preview-${questionId}`);
+        const imageUploadArea = questionBlock.querySelector('.image-upload-area');
 
+        // 이미지 표시 함수
+        function displayImage(imageData) {
+            preview.innerHTML = `
+                <img src="${imageData}" alt="문제 이미지">
+                <button type="button" class="btn-remove-image">이미지 제거</button>
+            `;
+
+            // 이미지 제거 버튼
+            preview.querySelector('.btn-remove-image').addEventListener('click', () => {
+                imageInput.value = '';
+                preview.innerHTML = '';
+            });
+        }
+
+        // 파일 선택 이벤트
         imageInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (event) => {
-                    preview.innerHTML = `
-                        <img src="${event.target.result}" alt="문제 이미지">
-                        <button type="button" class="btn-remove-image">이미지 제거</button>
-                    `;
+                    displayImage(event.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
-                    // 이미지 제거 버튼
-                    preview.querySelector('.btn-remove-image').addEventListener('click', () => {
-                        imageInput.value = '';
-                        preview.innerHTML = '';
-                    });
+        // 전체 문제 블록에 붙여넣기 이벤트 (클립보드 이미지)
+        questionBlock.addEventListener('paste', (e) => {
+            const items = e.clipboardData?.items;
+            if (!items) return;
+
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+
+                // 이미지 타입인지 확인
+                if (item.type.indexOf('image') !== -1) {
+                    e.preventDefault(); // 기본 붙여넣기 동작 방지
+
+                    const blob = item.getAsFile();
+                    const reader = new FileReader();
+
+                    reader.onload = (event) => {
+                        displayImage(event.target.result);
+                    };
+
+                    reader.readAsDataURL(blob);
+                    break;
+                }
+            }
+        });
+
+        // 드래그 앤 드롭 기능
+        imageUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            imageUploadArea.classList.add('dragover');
+        });
+
+        imageUploadArea.addEventListener('dragleave', () => {
+            imageUploadArea.classList.remove('dragover');
+        });
+
+        imageUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            imageUploadArea.classList.remove('dragover');
+
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.indexOf('image') !== -1) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    displayImage(event.target.result);
                 };
                 reader.readAsDataURL(file);
             }
