@@ -1,6 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     const quizTableBody = document.getElementById('quiz-table-body');
     const userTableBody = document.getElementById('user-table-body');
+    const quizSelect = document.getElementById('quiz-select');
+    const submissionResultsContainer = document.getElementById('submission-results-container');
+    const answerModal = document.getElementById('answer-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    const closeModal = document.querySelector('.modal .close');
 
     // 현재 로그인한 사용자가 관리자인지 확인 (실제 운영 환경에서는 서버 측에서 권한을 확인해야 합니다)
     const currentUser = JSON.parse(localStorage.getItem('user'));
@@ -123,7 +129,156 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // 문항지 선택 드롭다운 초기화
+    function initQuizSelect() {
+        const quizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+        quizSelect.innerHTML = '<option value="">문항지를 선택하세요</option>';
+
+        quizzes.forEach(quiz => {
+            const option = document.createElement('option');
+            option.value = quiz.id;
+            option.textContent = quiz.title;
+            quizSelect.appendChild(option);
+        });
+    }
+
+    // 선택한 문항지의 제출 결과 렌더링
+    function renderSubmissionResults(quizId) {
+        const submissions = JSON.parse(localStorage.getItem('submissions')) || [];
+        const quizSubmissions = submissions.filter(s => s.quizId === parseInt(quizId));
+
+        submissionResultsContainer.innerHTML = '';
+
+        if (quizSubmissions.length === 0) {
+            submissionResultsContainer.innerHTML = '<p class="no-data">제출된 결과가 없습니다.</p>';
+            return;
+        }
+
+        const table = document.createElement('table');
+        table.className = 'submission-table';
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제출자</th>
+                    <th>이메일</th>
+                    <th>제출 시간</th>
+                    <th>상세보기</th>
+                </tr>
+            </thead>
+            <tbody id="submission-table-body"></tbody>
+        `;
+        submissionResultsContainer.appendChild(table);
+
+        const tbody = table.querySelector('#submission-table-body');
+
+        quizSubmissions.forEach((submission, index) => {
+            const tr = document.createElement('tr');
+            const submittedDate = new Date(submission.submittedAt);
+
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${submission.userName}</td>
+                <td>${submission.userId}</td>
+                <td>${submittedDate.toLocaleString('ko-KR')}</td>
+                <td>
+                    <button class="btn-view-answers" data-submission-index="${index}">답안 보기</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // 답안 보기 버튼 이벤트 리스너
+        tbody.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-view-answers')) {
+                const submissionIndex = parseInt(e.target.dataset.submissionIndex);
+                showAnswerDetails(quizSubmissions[submissionIndex]);
+            }
+        });
+    }
+
+    // 답안 상세 모달 표시
+    function showAnswerDetails(submission) {
+        const quizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+        const quiz = quizzes.find(q => q.id === submission.quizId);
+
+        if (!quiz) {
+            alert('해당 문항지를 찾을 수 없습니다.');
+            return;
+        }
+
+        modalTitle.textContent = `${submission.userName}님의 답안 - ${submission.quizTitle}`;
+
+        let html = '<div class="answer-details">';
+
+        quiz.questions.forEach((question, qIndex) => {
+            const userAnswer = submission.answers[qIndex];
+
+            html += `
+                <div class="answer-item">
+                    <div class="question-header">
+                        <h3>문제 ${qIndex + 1}</h3>
+                    </div>
+                    <div class="question-content">
+                        ${question.text ? `<p class="question-text">${question.text}</p>` : ''}
+                        ${question.image ? `<img src="${question.image}" alt="문제 이미지" class="question-image">` : ''}
+                    </div>
+                    <div class="options-list">
+                        <h4>보기:</h4>
+                        <ul>
+                            ${question.options.map((option, optIndex) => {
+                                const isUserAnswer = userAnswer === optIndex;
+                                const isCorrect = question.correctAnswer === optIndex;
+                                let className = 'option-item';
+                                if (isUserAnswer) className += ' user-answer';
+                                if (isCorrect) className += ' correct-answer';
+
+                                return `
+                                    <li class="${className}">
+                                        <span class="option-number">${optIndex + 1}.</span>
+                                        <div class="option-content">
+                                            ${option.text ? `<span class="option-text">${option.text}</span>` : ''}
+                                            ${option.image ? `<img src="${option.image}" alt="보기 이미지" class="option-image">` : ''}
+                                        </div>
+                                        ${isUserAnswer ? '<span class="badge badge-user">학습자 선택</span>' : ''}
+                                        ${isCorrect ? '<span class="badge badge-correct">정답</span>' : ''}
+                                    </li>
+                                `;
+                            }).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        modalBody.innerHTML = html;
+        answerModal.style.display = 'block';
+    }
+
+    // 문항지 선택 이벤트
+    quizSelect.addEventListener('change', (e) => {
+        const quizId = e.target.value;
+        if (quizId) {
+            renderSubmissionResults(quizId);
+        } else {
+            submissionResultsContainer.innerHTML = '';
+        }
+    });
+
+    // 모달 닫기 이벤트
+    closeModal.addEventListener('click', () => {
+        answerModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === answerModal) {
+            answerModal.style.display = 'none';
+        }
+    });
+
     // 페이지 로드 시 목록 렌더링
     renderQuizzes(); // 문항지 목록 렌더링
     renderUsers(); // 사용자 목록 렌더링
+    initQuizSelect(); // 문항지 선택 드롭다운 초기화
 });

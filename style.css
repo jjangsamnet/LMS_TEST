@@ -1397,3 +1397,267 @@ textarea:focus {
         margin-top: var(--spacing-xs);
     }
 }
+
+/* ========================= */
+/* 제출 결과 조회 스타일 */
+/* ========================= */
+
+.submission-results-section {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.quiz-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: var(--radius-md);
+}
+
+.quiz-selector label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.quiz-selector select {
+    flex: 1;
+    max-width: 400px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-family: 'Pretendard', sans-serif;
+    background: white;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.quiz-selector select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.quiz-selector select:hover {
+    border-color: var(--primary-color);
+}
+
+.submission-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.submission-table thead {
+    background: var(--primary-gradient);
+}
+
+.submission-table thead th {
+    padding: var(--spacing-md);
+    text-align: left;
+    font-weight: 600;
+    color: white;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.submission-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: all var(--transition-fast);
+}
+
+.submission-table tbody tr:hover {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    transform: scale(1.005);
+}
+
+.submission-table tbody td {
+    padding: var(--spacing-md);
+    color: var(--text-primary);
+}
+
+.submission-table tbody td:first-child {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.btn-view-answers {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-view-answers:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.no-data {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: var(--radius-md);
+    border: 2px dashed var(--border-color);
+}
+
+/* 답안 상세 모달 스타일 */
+.modal-large {
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.answer-details {
+    padding: var(--spacing-md);
+}
+
+.answer-item {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    border: 2px solid var(--border-color);
+    transition: all var(--transition-base);
+}
+
+.answer-item:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.question-header h3 {
+    color: var(--primary-color);
+    font-size: 1.3rem;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.question-content {
+    margin-bottom: var(--spacing-lg);
+}
+
+.question-text {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    line-height: 1.7;
+    margin-bottom: var(--spacing-md);
+}
+
+.question-image {
+    max-width: 100%;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    margin-top: var(--spacing-sm);
+}
+
+.options-list h4 {
+    color: var(--text-primary);
+    font-size: 1rem;
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+}
+
+.options-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.option-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    background: #f8f9fa;
+    border: 2px solid transparent;
+    transition: all var(--transition-base);
+}
+
+.option-item.user-answer {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-color: #2196f3;
+}
+
+.option-item.correct-answer {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    border-color: var(--success-color);
+}
+
+.option-item.user-answer.correct-answer {
+    background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
+    border-color: var(--success-color);
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
+}
+
+.option-number {
+    font-weight: 700;
+    color: var(--primary-color);
+    min-width: 25px;
+    font-size: 1.1rem;
+}
+
+.option-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.option-text {
+    font-size: 1rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.option-image {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    object-fit: contain;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-user {
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    color: white;
+}
+
+.badge-correct {
+    background: linear-gradient(135deg, var(--success-color) 0%, #22c55e 100%);
+    color: white;
+}
