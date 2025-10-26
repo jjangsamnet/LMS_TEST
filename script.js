@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const signupForm = document.getElementById('signup-form');
     const signupName = document.getElementById('signup-name');
     const signupPassword = document.getElementById('signup-password');
+    const loginEmailInput = document.getElementById('email'); // 로그인 이메일 입력 필드
+    const signupNameInput = document.getElementById('signup-name'); // 회원가입 이름 입력 필드
     const confirmPassword = document.getElementById('confirm-password');
     const headerNav = document.getElementById('header-nav');
     const questionListUl = document.getElementById('question-ul');
@@ -82,17 +84,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function openLoginModal(e) {
         if(e) e.preventDefault();
         loginModal.style.display = 'flex';
+        loginModal.setAttribute('aria-hidden', 'false');
+        loginEmailInput.focus(); // 모달이 열리면 이메일 필드에 포커스
     }
 
     function openSignupModal(e) {
         if(e) e.preventDefault();
         signupModal.style.display = 'flex';
+        signupModal.setAttribute('aria-hidden', 'false');
+        signupNameInput.focus(); // 모달이 열리면 이름 필드에 포커스
     }
 
     // 모달 닫기 함수
     function closeModal() {
         loginModal.style.display = 'none';
+        loginModal.setAttribute('aria-hidden', 'true');
         signupModal.style.display = 'none';
+        signupModal.setAttribute('aria-hidden', 'true');
     }
 
     // 로그아웃 처리 함수
