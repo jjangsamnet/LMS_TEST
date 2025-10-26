@@ -19,12 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // 문항지 목록을 렌더링하는 함수
     function renderQuizzes() {
         const quizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+        const submissions = JSON.parse(localStorage.getItem('submissions')) || [];
         quizTableBody.innerHTML = ''; // 기존 목록 초기화
 
         if (quizzes.length === 0) {
             const tr = document.createElement('tr');
             const td = document.createElement('td');
-            td.colSpan = 4;
+            td.colSpan = 5;
             td.textContent = '등록된 문항지가 없습니다.';
             td.style.textAlign = 'center';
             tr.appendChild(td);
@@ -33,12 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         quizzes.forEach((quiz, index) => {
+            const submissionCount = submissions.filter(s => s.quizId === quiz.id).length;
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${index + 1}</td>
                 <td><strong>${quiz.title}</strong></td>
                 <td>${quiz.questions.length}개</td>
                 <td>
+                    <span class="submission-count">${submissionCount}명 제출</span>
+                </td>
+                <td class="action-buttons">
+                    <button class="btn-view-results" data-quiz-id="${quiz.id}">결과 보기</button>
                     <button class="btn-delete-quiz" data-quiz-id="${quiz.id}">삭제</button>
                 </td>
             `;
@@ -79,10 +85,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 문항지 테이블 이벤트 위임 - 문항지 삭제
+    // 문항지 테이블 이벤트 위임 - 결과 보기 및 문항지 삭제
     quizTableBody.addEventListener('click', (e) => {
         const target = e.target;
 
+        // 결과 보기 버튼 클릭
+        if (target.classList.contains('btn-view-results')) {
+            const quizId = target.dataset.quizId;
+            // 드롭다운에서 해당 문항지 선택
+            quizSelect.value = quizId;
+            // 제출 결과 렌더링
+            renderSubmissionResults(quizId);
+            // 제출 결과 섹션으로 스크롤
+            document.querySelector('.submission-results-section').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        // 문항지 삭제 버튼 클릭
         if (target.classList.contains('btn-delete-quiz')) {
             const quizId = parseInt(target.dataset.quizId);
             let quizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
@@ -93,6 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
                 alert('문항지가 삭제되었습니다.');
                 renderQuizzes(); // 목록 새로고침
+                initQuizSelect(); // 드롭다운도 새로고침
             }
         }
     });
