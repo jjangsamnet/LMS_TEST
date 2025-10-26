@@ -12,8 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // localStorage에서 모든 사용자 목록을 가져옴
     const users = JSON.parse(localStorage.getItem('users')) || [];
 
+    // 관리자 계정(admin)을 제외한 사용자 목록 필터링
+    const regularUsers = users.filter(user => user.email !== 'admin');
+
     // 사용자 목록이 비어있는 경우
-    if (users.length === 0) {
+    if (regularUsers.length === 0) {
         const tr = document.createElement('tr');
         const td = document.createElement('td');
         td.colSpan = 2;
@@ -24,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 테이블에 사용자 데이터를 채움
-    users.forEach(user => {
+    regularUsers.forEach(user => {
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${user.name}</td><td>${user.email}</td>`;
         userTableBody.appendChild(tr);
