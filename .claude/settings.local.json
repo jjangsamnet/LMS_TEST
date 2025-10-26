@@ -6,7 +6,8 @@
       "Bash(git push:*)",
       "Bash(git commit:*)",
       "Bash(git reset:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(powershell -Command \"Get-Date -Format ''yyyyMMddHHmmss''\")"
     ],
     "deny": [],
     "ask": []
