@@ -61,15 +61,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span>${currentUser.name}님 환영합니다!</span>
                 <a href="#" id="logout-btn">로그아웃</a>
             `;
-            document.getElementById('logout-btn').addEventListener('click', handleLogout);
         } else {
             // 로그아웃 상태일 때
             headerNav.innerHTML = `
-                <a href="#" id="login-btn">로그인</a>
-                <a href="#" id="signup-btn">회원가입</a>
+                <button id="login-btn" class="btn" type="button">로그인</button>
+				<button id="signup-btn" class="btn" type="button">회원가입</button>
             `;
-            document.getElementById('login-btn').addEventListener('click', openLoginModal);
-            document.getElementById('signup-btn').addEventListener('click', openSignupModal);
         }
     }
 
@@ -138,6 +135,18 @@ document.addEventListener('DOMContentLoaded', () => {
         closeModal();
         updateHeader();
         renderQuestions(); // 로그인 시 문항 목록 다시 렌더링
+    });
+
+    // 헤더 네비게이션에 이벤트 위임 적용
+    headerNav.addEventListener('click', (e) => {
+        const targetId = e.target.id;
+        if (targetId === 'login-btn') {
+            openLoginModal(e);
+        } else if (targetId === 'signup-btn') {
+            openSignupModal(e);
+        } else if (targetId === 'logout-btn') {
+            handleLogout(e);
+        }
     });
 
     // data-close 속성을 가진 모든 요소(x 버튼, 백드롭)에 닫기 이벤트 추가
