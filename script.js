@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 모달 관련 요소
     const loginModal = document.getElementById('login-modal');
     const signupModal = document.getElementById('signup-modal');
-    const closeModalBtns = document.querySelectorAll('.close-btn');
 
     // 폼, 입력, 네비게이션 요소
     const loginForm = document.getElementById('login-form');
@@ -15,6 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const headerNav = document.getElementById('header-nav');
     const questionListUl = document.getElementById('question-ul');
     
+    // 포커스 관리를 위한 변수
+    let lastFocusedElement;
+
     // 로그인 상태 변수
     // 페이지 로드 시 localStorage에서 로그인 상태를 불러옴
     let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -71,18 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 모달 바깥 영역 클릭 시 모달 닫기
-    window.addEventListener('click', (e) => {
-        if (e.target == loginModal) { 
-            loginModal.style.display = 'none';
-        } else if (e.target == signupModal) {
-            signupModal.style.display = 'none';
-        }
-    });
-
     // 모달 열기 함수
     function openLoginModal(e) {
         if(e) e.preventDefault();
+        lastFocusedElement = document.activeElement; // 현재 포커스된 요소 저장
         loginModal.style.display = 'flex';
         loginModal.setAttribute('aria-hidden', 'false');
         loginEmailInput.focus(); // 모달이 열리면 이메일 필드에 포커스
@@ -90,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openSignupModal(e) {
         if(e) e.preventDefault();
+        lastFocusedElement = document.activeElement; // 현재 포커스된 요소 저장
         signupModal.style.display = 'flex';
         signupModal.setAttribute('aria-hidden', 'false');
         signupNameInput.focus(); // 모달이 열리면 이름 필드에 포커스
@@ -101,6 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
         loginModal.setAttribute('aria-hidden', 'true');
         signupModal.style.display = 'none';
         signupModal.setAttribute('aria-hidden', 'true');
+
+        if (lastFocusedElement) {
+            lastFocusedElement.focus(); // 모달을 열었던 요소로 포커스 복원
+        }
     }
 
     // 로그아웃 처리 함수
@@ -141,9 +140,9 @@ document.addEventListener('DOMContentLoaded', () => {
         renderQuestions(); // 로그인 시 문항 목록 다시 렌더링
     });
 
-    // 모든 모달의 'x' 버튼에 닫기 이벤트 추가
-    closeModalBtns.forEach(btn => {
-        btn.addEventListener('click', closeModal);
+    // data-close 속성을 가진 모든 요소(x 버튼, 백드롭)에 닫기 이벤트 추가
+    document.querySelectorAll('[data-close]').forEach(element => {
+        element.addEventListener('click', closeModal);
     });
 
     // 초기 화면 렌더링
