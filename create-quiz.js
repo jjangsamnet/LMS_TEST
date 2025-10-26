@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <fieldset>
                 <legend>문제 ${questionCounter}</legend>
                 <div class="form-group">
-                    <label for="question-text-${questionId}">문제 내용</label>
-                    <textarea id="question-text-${questionId}" name="question-text" rows="3" required placeholder="문제 내용을 입력하세요"></textarea>
+                    <label for="question-text-${questionId}">문제 내용 (선택사항)</label>
+                    <textarea id="question-text-${questionId}" name="question-text" rows="3" placeholder="문제 내용을 입력하거나 아래에 이미지만 첨부할 수 있습니다"></textarea>
                 </div>
                 <div class="form-group">
                     <label for="question-image-${questionId}">이미지 첨부 (선택사항)</label>
@@ -276,11 +276,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const imagePreview = block.querySelector('.image-preview img');
             const imageData = imagePreview ? imagePreview.src : null;
 
-            // 유효성 검사: 각 보기에 텍스트나 이미지가 있어야 함
+            // 유효성 검사
+            // 1. 문제에 텍스트나 이미지 중 하나는 있어야 함
+            const hasQuestionContent = questionText.trim() || imageData;
+
+            // 2. 각 보기에 텍스트나 이미지가 있어야 함
             const hasValidOptions = options.every(opt => opt.text || opt.image);
 
-            if (!questionText.trim() || !hasValidOptions) {
+            if (!hasQuestionContent) {
+                alert(`문제 ${index + 1}에 문제 내용(텍스트 또는 이미지)을 입력해주세요.`);
                 isValid = false;
+                return;
+            }
+
+            if (!hasValidOptions) {
+                alert(`문제 ${index + 1}의 모든 보기에 내용(텍스트 또는 이미지)을 입력해주세요.`);
+                isValid = false;
+                return;
             }
 
             if (!selectedAnswer) {
@@ -302,7 +314,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (!isValid) {
-            alert('모든 문제 내용과 보기를 입력하고 정답을 선택해주세요.');
             return;
         }
 
