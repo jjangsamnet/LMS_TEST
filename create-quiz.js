@@ -94,11 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
         quizzes.push(newQuiz);
         localStorage.setItem('quizzes', JSON.stringify(quizzes));
 
-        alert('문항이 성공적으로 저장되었습니다.');
-        quizForm.reset();
-        questionsContainer.innerHTML = '';
-        questionCounter = 0;
-        addQuestion(); // 새 문항 작성을 위해 첫 번째 문제 필드 추가
+        alert('문항지가 성공적으로 저장되었습니다.');
+        // 관리자 페이지로 이동
+        window.location.href = 'admin.html';
     });
 
     // 페이지 로드 시 첫 번째 문제 필드 추가

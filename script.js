@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const signupNameInput = document.getElementById('signup-name'); // 회원가입 이름 입력 필드
     const confirmPassword = document.getElementById('confirm-password');
     const headerNav = document.getElementById('header-nav');
-    const questionListUl = document.getElementById('question-ul');
-    
+    const quizGrid = document.getElementById('quiz-grid');
+
     // 포커스 관리를 위한 변수
     let lastFocusedElement;
 
@@ -21,13 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 페이지 로드 시 localStorage에서 로그인 상태를 불러옴
     let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     let currentUser = JSON.parse(localStorage.getItem('user'));
-    
-    // 문항 데이터
-    const questions = [
-        { id: 1, text: '1번 문제: HTML의 기본 구조에 대해 설명하시오.' },
-        { id: 2, text: '2번 문제: CSS에서 Flexbox와 Grid의 차이점은 무엇인가요?' },
-        { id: 3, text: '3번 문제: JavaScript의 비동기 처리 방식에 대해 설명하시오.' }
-    ];
 
     // 관리자 계정 초기화 함수
     function initializeAdmin() {
@@ -46,25 +39,54 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    function renderQuestions() {
-        questionListUl.innerHTML = ''; // 기존 목록 초기화
-        questions.forEach(q => {
-            const li = document.createElement('li');
-            // 로그인 상태에 따라 '풀기' 버튼을 조건부로 추가
-            const solveButtonHtml = isLoggedIn 
-                ? `<button class="solve-btn" data-question-id="${q.id}">풀기</button>` 
+    // 문항지 목록 렌더링 함수
+    function renderQuizzes() {
+        quizGrid.innerHTML = ''; // 기존 목록 초기화
+        const quizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+
+        if (quizzes.length === 0) {
+            quizGrid.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">📝</div>
+                    <div class="empty-state-text">아직 등록된 문항지가 없습니다.</div>
+                </div>
+            `;
+            return;
+        }
+
+        quizzes.forEach(quiz => {
+            const card = document.createElement('div');
+            card.className = 'quiz-card';
+
+            const solveButton = isLoggedIn
+                ? `<button class="solve-btn" data-quiz-id="${quiz.id}">문항 풀기</button>`
                 : '';
 
-            li.innerHTML = `<span>${q.text}</span> ${solveButtonHtml}`;
-            questionListUl.appendChild(li);
+            card.innerHTML = `
+                <div class="quiz-card-header">
+                    <h3 class="quiz-card-title">${quiz.title}</h3>
+                    <div class="quiz-card-meta">
+                        <span class="badge">${quiz.questions.length}문제</span>
+                    </div>
+                </div>
+                <div class="quiz-card-body">
+                    ${quiz.questions.slice(0, 3).map((q, idx) => `${idx + 1}. ${q.text.substring(0, 50)}${q.text.length > 50 ? '...' : ''}`).join('<br>')}
+                    ${quiz.questions.length > 3 ? '<br>...' : ''}
+                </div>
+                <div class="quiz-card-footer">
+                    ${solveButton}
+                </div>
+            `;
+
+            quizGrid.appendChild(card);
         });
 
-        // '풀기' 버튼이 존재할 경우에만 이벤트 리스너 추가
+        // '풀기' 버튼 이벤트 리스너 추가
         if (isLoggedIn) {
             document.querySelectorAll('.solve-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const questionId = btn.dataset.questionId;
-                    alert(`${questionId}번 문항 풀이 페이지로 이동합니다.`);
+                    const quizId = btn.dataset.quizId;
+                    alert(`"${quizzes.find(q => q.id == quizId).title}" 문항 풀이 페이지로 이동합니다.`);
                 });
             });
         }
@@ -125,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('user'); // localStorage에서 사용자 정보 제거
         alert('로그아웃 되었습니다.');
         updateHeader();
-        renderQuestions(); // 로그아웃 시 문항 목록 다시 렌더링
+        renderQuizzes(); // 로그아웃 시 문항지 목록 다시 렌더링
     }
 
     // 로그인 폼 제출 시
@@ -156,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('로그인 성공!');
             closeModal();
             updateHeader();
-            renderQuestions(); // 로그인 시 문항 목록 다시 렌더링
+            renderQuizzes(); // 로그인 시 문항지 목록 다시 렌더링
         }
     });
 
@@ -180,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 초기 화면 렌더링
     initializeAdmin(); // 관리자 계정 확인 및 생성
     updateHeader();
-    renderQuestions();
+    renderQuizzes(); // 문항지 목록 렌더링
 
     // 회원가입 폼 제출 시 비밀번호 일치 검사
     signupForm.addEventListener('submit', (e) => {

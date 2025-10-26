@@ -132,9 +132,9 @@ main {
     width: 100%;
 }
 
-/* ============== */
-/* 문항 리스트 */
-/* ============== */
+/* ==================== */
+/* 문항지 그리드 레이아웃 */
+/* ==================== */
 
 .question-list h2 {
     font-size: 1.875rem;
@@ -157,64 +157,101 @@ main {
     border-radius: 2px;
 }
 
-.question-list ul {
+.quiz-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
     list-style: none;
     padding: 0;
-    display: grid;
-    gap: var(--spacing-md);
 }
 
-.question-list li {
+.quiz-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-md);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: var(--spacing-lg);
     transition: all var(--transition-base);
     box-shadow: var(--shadow-sm);
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
 }
 
-.question-list li::before {
+.quiz-card::before {
     content: '';
     position: absolute;
-    left: 0;
     top: 0;
-    bottom: 0;
-    width: 4px;
+    left: 0;
+    right: 0;
+    height: 4px;
     background: var(--primary-gradient);
-    transform: scaleY(0);
+    transform: scaleX(0);
     transition: transform var(--transition-base);
 }
 
-.question-list li:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
+.quiz-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
     border-color: var(--primary-color);
 }
 
-.question-list li:hover::before {
-    transform: scaleY(1);
+.quiz-card:hover::before {
+    transform: scaleX(1);
 }
 
-.question-list li strong {
-    font-weight: 600;
+.quiz-card-header {
+    margin-bottom: var(--spacing-md);
+}
+
+.quiz-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
     color: var(--text-primary);
-    font-size: 1.05rem;
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.4;
+}
+
+.quiz-card-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.quiz-card-meta .badge {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.quiz-card-body {
+    flex: 1;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.quiz-card-footer {
+    display: flex;
+    gap: var(--spacing-sm);
 }
 
 .solve-btn {
+    flex: 1;
     background: var(--success-color);
     color: white;
     border: none;
-    padding: var(--spacing-xs) var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-md);
     cursor: pointer;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     transition: all var(--transition-base);
     box-shadow: var(--shadow-sm);
 }
@@ -227,6 +264,24 @@ main {
 
 .solve-btn:active {
     transform: translateY(0);
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-secondary);
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.3;
+}
+
+.empty-state-text {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
 }
 
 /* ============ */
@@ -497,6 +552,99 @@ main {
     box-shadow: var(--shadow-md);
 }
 
+/* 문항지 목록 섹션 */
+.quiz-list-section {
+    background: var(--bg-card);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.quiz-list-section h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+#quiz-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#quiz-table thead {
+    background: var(--primary-gradient);
+    color: white;
+}
+
+#quiz-table thead th {
+    padding: var(--spacing-md);
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+#quiz-table thead th:first-child {
+    border-top-left-radius: var(--radius-md);
+    width: 80px;
+    text-align: center;
+}
+
+#quiz-table thead th:last-child {
+    border-top-right-radius: var(--radius-md);
+    width: 120px;
+    text-align: center;
+}
+
+#quiz-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: all var(--transition-base);
+}
+
+#quiz-table tbody tr:hover {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+#quiz-table tbody td {
+    padding: var(--spacing-md);
+    color: var(--text-primary);
+}
+
+#quiz-table tbody td:first-child {
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+#quiz-table tbody td:nth-child(3) {
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+#quiz-table tbody td:last-child {
+    text-align: center;
+}
+
+.btn-delete-quiz {
+    padding: var(--spacing-xs) var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all var(--transition-base);
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-delete-quiz:hover {
+    background: #e11d48;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
 /* 사용자 목록 테이블 */
 .user-list {
     background: var(--bg-card);
@@ -668,26 +816,40 @@ main {
         padding: var(--spacing-lg);
     }
 
-    .question-list li {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--spacing-sm);
+    /* 그리드 카드 반응형 */
+    .quiz-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
     }
 
-    .solve-btn {
-        width: 100%;
+    .quiz-card {
+        min-height: auto;
     }
 
+    /* 테이블 반응형 */
+    #quiz-table,
     #user-table {
         font-size: 0.875rem;
     }
 
+    #quiz-table th,
+    #quiz-table td,
     #user-table th,
     #user-table td {
         padding: var(--spacing-sm);
     }
 
+    #quiz-table thead th:first-child,
+    #quiz-table tbody td:first-child {
+        width: 50px;
+    }
+
     .form-actions {
         flex-direction: column;
+    }
+
+    .btn {
+        margin-left: 0;
+        margin-top: var(--spacing-xs);
     }
 }

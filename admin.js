@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const quizTableBody = document.getElementById('quiz-table-body');
     const userTableBody = document.getElementById('user-table-body');
 
     // 현재 로그인한 사용자가 관리자인지 확인 (실제 운영 환경에서는 서버 측에서 권한을 확인해야 합니다)
@@ -7,6 +8,36 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('접근 권한이 없습니다.');
         window.location.href = 'index.html';
         return;
+    }
+
+    // 문항지 목록을 렌더링하는 함수
+    function renderQuizzes() {
+        const quizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+        quizTableBody.innerHTML = ''; // 기존 목록 초기화
+
+        if (quizzes.length === 0) {
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            td.colSpan = 4;
+            td.textContent = '등록된 문항지가 없습니다.';
+            td.style.textAlign = 'center';
+            tr.appendChild(td);
+            quizTableBody.appendChild(tr);
+            return;
+        }
+
+        quizzes.forEach((quiz, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td><strong>${quiz.title}</strong></td>
+                <td>${quiz.questions.length}개</td>
+                <td>
+                    <button class="btn-delete-quiz" data-quiz-id="${quiz.id}">삭제</button>
+                </td>
+            `;
+            quizTableBody.appendChild(tr);
+        });
     }
 
     // 사용자 목록을 렌더링하는 함수
@@ -42,7 +73,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 이벤트 위임을 사용하여 테이블 내 버튼 클릭 처리
+    // 문항지 테이블 이벤트 위임 - 문항지 삭제
+    quizTableBody.addEventListener('click', (e) => {
+        const target = e.target;
+
+        if (target.classList.contains('btn-delete-quiz')) {
+            const quizId = parseInt(target.dataset.quizId);
+            let quizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+            const quiz = quizzes.find(q => q.id === quizId);
+
+            if (quiz && confirm(`"${quiz.title}" 문항지를 정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`)) {
+                const updatedQuizzes = quizzes.filter(q => q.id !== quizId);
+                localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
+                alert('문항지가 삭제되었습니다.');
+                renderQuizzes(); // 목록 새로고침
+            }
+        }
+    });
+
+    // 사용자 테이블 이벤트 위임 - 비밀번호 초기화 및 회원 삭제
     userTableBody.addEventListener('click', (e) => {
         const target = e.target;
         const userEmail = target.dataset.email;
@@ -74,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 페이지 로드 시 사용자 목록 렌더링
-    renderUsers();
+    // 페이지 로드 시 목록 렌더링
+    renderQuizzes(); // 문항지 목록 렌더링
+    renderUsers(); // 사용자 목록 렌더링
 });

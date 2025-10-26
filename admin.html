@@ -20,8 +20,23 @@
 
     <main class="container" id="main-content">
         <section class="quiz-management" aria-labelledby="quiz-management-title">
-            <h2 id="quiz-management-title">문항 관리</h2>
-            <a href="create-quiz.html" class="btn" id="create-quiz-btn">새 문항 출제하기</a>
+            <h2 id="quiz-management-title">문항지 관리</h2>
+            <a href="create-quiz.html" class="btn" id="create-quiz-btn">새 문항지 만들기</a>
+        </section>
+
+        <section class="quiz-list-section" aria-labelledby="quiz-list-title">
+            <h2 id="quiz-list-title">등록된 문항지 목록</h2>
+            <table id="quiz-table">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>문항지 제목</th>
+                        <th>문제 수</th>
+                        <th>관리</th>
+                    </tr>
+                </thead>
+                <tbody id="quiz-table-body"></tbody>
+            </table>
         </section>
 
         <section class="user-list" aria-labelledby="user-list-title">
