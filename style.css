@@ -147,49 +147,55 @@ main {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: 600; /* 글꼴 두께 조정 */
+    transition: all 0.2s ease-in-out; /* 모든 속성에 부드러운 전환 효과 */
     color: white;
     margin-left: 10px; /* 버튼 사이 간격 */
 }
 
 /* 로그인 버튼 */
 #login-btn {
-    background-color: #007bff; /* 파란색 */
+    background-color: #4a69bd; /* 기존 헤더와 통일감 있는 색상 */
+    border: 2px solid #4a69bd;
 }
 
 #login-btn:hover {
-    background-color: #0056b3;
+    background-color: #3b5596;
+    border-color: #3b5596;
     transform: translateY(-2px); /* 마우스 오버 시 살짝 위로 이동 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* 입체감 효과 */
 }
 
-/* 회원가입 버튼 */
+/* 회원가입 버튼 (고스트 버튼 스타일) */
 #signup-btn {
-    background-color: #28a745; /* 녹색 */
+    background-color: transparent;
+    border: 2px solid #f4f4f9; /* 밝은 테두리 색상 */
+    color: #f4f4f9;
 }
 
 #signup-btn:hover {
-    background-color: #218838;
+    background-color: #f4f4f9; /* 마우스 오버 시 배경 채우기 */
+    color: #4a69bd; /* 텍스트 색상 변경 */
     transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* 로그아웃 버튼(링크) 스타일 */
 #logout-btn {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #dc3545; /* 빨간색 */
+    background-color: #e53e3e; /* 좀 더 부드러운 빨간색 */
     color: white;
     text-decoration: none;
     border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
 }
 
 #logout-btn:hover {
-    background-color: #c82333;
+    background-color: #c53030;
     transform: translateY(-2px);
-    text-decoration: none;
-    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* 헤더 네비게이션 영역 정렬 */
