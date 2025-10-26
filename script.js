@@ -62,16 +62,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? `<button class="solve-btn" data-quiz-id="${quiz.id}">문항 풀기</button>`
                 : '';
 
+            // 이미지가 있는 문제 확인
+            const hasImages = quiz.questions.some(q => q.image);
+            const imageIcon = hasImages ? '<span class="icon">🖼️</span>' : '';
+
             card.innerHTML = `
                 <div class="quiz-card-header">
                     <h3 class="quiz-card-title">${quiz.title}</h3>
                     <div class="quiz-card-meta">
                         <span class="badge">${quiz.questions.length}문제</span>
+                        ${imageIcon}
                     </div>
                 </div>
                 <div class="quiz-card-body">
-                    ${quiz.questions.slice(0, 3).map((q, idx) => `${idx + 1}. ${q.text.substring(0, 50)}${q.text.length > 50 ? '...' : ''}`).join('<br>')}
-                    ${quiz.questions.length > 3 ? '<br>...' : ''}
+                    ${quiz.questions.slice(0, 2).map((q, idx) => {
+                        const text = q.text.substring(0, 60);
+                        return `<div class="question-preview">
+                            ${idx + 1}. ${text}${q.text.length > 60 ? '...' : ''}
+                            ${q.image ? '<span class="has-image-indicator">📷</span>' : ''}
+                        </div>`;
+                    }).join('')}
+                    ${quiz.questions.length > 2 ? '<div class="more-questions">...</div>' : ''}
                 </div>
                 <div class="quiz-card-footer">
                     ${solveButton}
