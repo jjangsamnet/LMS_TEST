@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 상태 변수
     let currentQuestionIndex = 0;
     let userAnswers = new Array(quiz.questions.length).fill(null);
+    const startTime = new Date(); // 풀이 시작 시간
 
     // 퀴즈 제목 설정
     quizTitleElement.textContent = quiz.title;
@@ -183,14 +184,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 결과 표시 (제출 완료 메시지)
     function showResult() {
-        // 답안을 localStorage에 저장 (선택사항)
+        const endTime = new Date();
+        const solvingTimeMs = endTime - startTime; // 풀이 시간 (밀리초)
+        const solvingTimeMinutes = Math.floor(solvingTimeMs / 60000); // 분
+        const solvingTimeSeconds = Math.floor((solvingTimeMs % 60000) / 1000); // 초
+
+        // 정오답 계산
+        let correctCount = 0;
+        let incorrectCount = 0;
+        const questionResults = quiz.questions.map((question, index) => {
+            const isCorrect = userAnswers[index] === question.correctAnswer;
+            if (isCorrect) correctCount++;
+            else incorrectCount++;
+            return isCorrect ? 'O' : 'X';
+        });
+
+        // 답안을 localStorage에 저장
         const submission = {
             quizId: quiz.id,
             quizTitle: quiz.title,
             userId: currentUser.email,
             userName: currentUser.name,
             answers: userAnswers,
-            submittedAt: new Date().toISOString()
+            submittedAt: endTime.toISOString(),
+            startTime: startTime.toISOString(),
+            solvingTime: solvingTimeMs, // 밀리초 단위
+            correctCount: correctCount,
+            incorrectCount: incorrectCount,
+            questionResults: questionResults // 문항별 O/X
         };
 
         // 제출 기록 저장

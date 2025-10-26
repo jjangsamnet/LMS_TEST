@@ -176,6 +176,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // CSV 다운로드 버튼 추가
+        const downloadBtn = document.createElement('button');
+        downloadBtn.className = 'btn-download-csv';
+        downloadBtn.textContent = 'CSV 다운로드';
+        downloadBtn.addEventListener('click', () => downloadCSV(quizSubmissions, quizId));
+        submissionResultsContainer.appendChild(downloadBtn);
+
         const table = document.createElement('table');
         table.className = 'submission-table';
         table.innerHTML = `
@@ -185,6 +192,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <th>제출자</th>
                     <th>이메일</th>
                     <th>제출 시간</th>
+                    <th>풀이 시간</th>
+                    <th>정답</th>
+                    <th>오답</th>
+                    <th>문항별 O/X</th>
                     <th>상세보기</th>
                 </tr>
             </thead>
@@ -198,11 +209,30 @@ document.addEventListener('DOMContentLoaded', () => {
             const tr = document.createElement('tr');
             const submittedDate = new Date(submission.submittedAt);
 
+            // 풀이 시간 계산
+            let solvingTimeStr = '-';
+            if (submission.solvingTime) {
+                const minutes = Math.floor(submission.solvingTime / 60000);
+                const seconds = Math.floor((submission.solvingTime % 60000) / 1000);
+                solvingTimeStr = `${minutes}분 ${seconds}초`;
+            }
+
+            // 정오답 개수
+            const correctCount = submission.correctCount || 0;
+            const incorrectCount = submission.incorrectCount || 0;
+
+            // 문항별 O/X
+            const questionResults = submission.questionResults ? submission.questionResults.join(' ') : '-';
+
             tr.innerHTML = `
                 <td>${index + 1}</td>
                 <td>${submission.userName}</td>
                 <td>${submission.userId}</td>
                 <td>${submittedDate.toLocaleString('ko-KR')}</td>
+                <td>${solvingTimeStr}</td>
+                <td class="correct-count">${correctCount}개</td>
+                <td class="incorrect-count">${incorrectCount}개</td>
+                <td class="question-results">${questionResults}</td>
                 <td>
                     <button class="btn-view-answers" data-submission-index="${index}">답안 보기</button>
                 </td>
@@ -276,6 +306,63 @@ document.addEventListener('DOMContentLoaded', () => {
         html += '</div>';
         modalBody.innerHTML = html;
         answerModal.style.display = 'block';
+    }
+
+    // CSV 다운로드 함수
+    function downloadCSV(submissions, quizId) {
+        const quizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+        const quiz = quizzes.find(q => q.id === parseInt(quizId));
+
+        if (!quiz || submissions.length === 0) {
+            alert('다운로드할 데이터가 없습니다.');
+            return;
+        }
+
+        // CSV 헤더
+        let csv = '\uFEFF'; // UTF-8 BOM for Excel
+        csv += '번호,제출자,이메일,제출 시간,풀이 시간(초),정답 개수,오답 개수';
+
+        // 각 문항별 컬럼 추가
+        for (let i = 1; i <= quiz.questions.length; i++) {
+            csv += `,문항${i}`;
+        }
+        csv += '\n';
+
+        // 데이터 행
+        submissions.forEach((submission, index) => {
+            const submittedDate = new Date(submission.submittedAt);
+            const dateStr = submittedDate.toLocaleString('ko-KR');
+            const solvingTimeSec = submission.solvingTime ? Math.floor(submission.solvingTime / 1000) : 0;
+            const correctCount = submission.correctCount || 0;
+            const incorrectCount = submission.incorrectCount || 0;
+
+            csv += `${index + 1},"${submission.userName}","${submission.userId}","${dateStr}",${solvingTimeSec},${correctCount},${incorrectCount}`;
+
+            // 문항별 O/X
+            if (submission.questionResults) {
+                submission.questionResults.forEach(result => {
+                    csv += `,${result}`;
+                });
+            } else {
+                for (let i = 0; i < quiz.questions.length; i++) {
+                    csv += ',-';
+                }
+            }
+            csv += '\n';
+        });
+
+        // 파일 다운로드
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        const filename = `${quiz.title}_제출결과_${new Date().toISOString().split('T')[0]}.csv`;
+
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     // 문항지 선택 이벤트

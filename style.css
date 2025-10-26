@@ -1662,6 +1662,52 @@ textarea:focus {
     color: white;
 }
 
+/* CSV 다운로드 버튼 */
+.btn-download-csv {
+    background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+    color: white;
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--spacing-md);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.btn-download-csv:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+}
+
+.btn-download-csv::before {
+    content: '⬇';
+    font-size: 1.2rem;
+}
+
+/* 제출 결과 테이블 추가 스타일 */
+.correct-count {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.incorrect-count {
+    color: var(--danger-color);
+    font-weight: 600;
+}
+
+.question-results {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
 /* 문항지 목록 테이블 추가 스타일 */
 .action-buttons {
     display: flex;
