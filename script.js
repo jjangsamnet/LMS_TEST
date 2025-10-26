@@ -130,11 +130,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         localStorage.setItem('isLoggedIn', 'true'); // localStorage에 로그인 상태 저장
         localStorage.setItem('user', JSON.stringify(currentUser)); // localStorage에 사용자 정보 저장
-
-        alert('로그인 성공!');
-        closeModal();
-        updateHeader();
-        renderQuestions(); // 로그인 시 문항 목록 다시 렌더링
+        
+        // 관리자 계정인지 확인
+        if (currentUser.email === 'admin') {
+            alert('관리자님, 환영합니다. 회원 관리 페이지로 이동합니다.');
+            window.location.href = 'admin.html'; // 관리자 페이지로 리디렉션
+        } else {
+            alert('로그인 성공!');
+            closeModal();
+            updateHeader();
+            renderQuestions(); // 로그인 시 문항 목록 다시 렌더링
+        }
     });
 
     // 헤더 네비게이션에 이벤트 위임 적용

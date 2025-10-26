@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS TEST - 회원 관리</title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>LMS TEST - 회원 관리</h1>
+            <nav id="header-nav" aria-label="주요">
+                <a href="index.html">메인 페이지로 돌아가기</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" id="main-content">
+        <section class="user-list" aria-labelledby="user-list-title">
+            <h2 id="user-list-title">가입된 회원 목록</h2>
+            <table id="user-table">
+                <thead>
+                    <tr>
+                        <th>이름</th>
+                        <th>이메일</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table-body"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html>
