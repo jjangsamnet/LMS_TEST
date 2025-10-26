@@ -18,26 +18,50 @@
         </div>
     </header>
 
-    <main class="container" id="main-content">
-        <div class="quiz-solve-container">
-            <!-- 진행 상황 -->
-            <div class="quiz-progress">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill"></div>
+    <main class="container quiz-main-container" id="main-content">
+        <div class="quiz-content-wrapper">
+            <div class="quiz-solve-container">
+                <!-- 진행 상황 -->
+                <div class="quiz-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-text" id="progress-text">1 / 5</div>
                 </div>
-                <div class="progress-text" id="progress-text">1 / 5</div>
+
+                <!-- 문제 표시 영역 -->
+                <div class="question-container" id="question-container">
+                    <!-- 문제가 동적으로 표시됩니다 -->
+                </div>
+
+                <!-- 네비게이션 버튼 -->
+                <div class="quiz-navigation">
+                    <button type="button" class="btn btn-secondary" id="prev-btn" disabled>이전 문제</button>
+                    <button type="button" class="btn btn-primary" id="next-btn">다음 문제</button>
+                    <button type="button" class="btn btn-submit" id="submit-btn" style="display: none;">제출하기</button>
+                </div>
             </div>
 
-            <!-- 문제 표시 영역 -->
-            <div class="question-container" id="question-container">
-                <!-- 문제가 동적으로 표시됩니다 -->
-            </div>
-
-            <!-- 네비게이션 버튼 -->
-            <div class="quiz-navigation">
-                <button type="button" class="btn btn-secondary" id="prev-btn" disabled>이전 문제</button>
-                <button type="button" class="btn btn-primary" id="next-btn">다음 문제</button>
-                <button type="button" class="btn btn-submit" id="submit-btn" style="display: none;">제출하기</button>
+            <!-- 문항 네비게이션 사이드바 -->
+            <div class="question-sidebar">
+                <h3>문항 목록</h3>
+                <div class="question-grid" id="question-grid">
+                    <!-- 문항 번호가 동적으로 표시됩니다 -->
+                </div>
+                <div class="sidebar-legend">
+                    <div class="legend-item">
+                        <span class="legend-box answered"></span>
+                        <span>답변 완료</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-box unanswered"></span>
+                        <span>미답변</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-box current"></span>
+                        <span>현재 문항</span>
+                    </div>
+                </div>
             </div>
         </div>
 

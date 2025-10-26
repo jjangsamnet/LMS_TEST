@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextBtn = document.getElementById('next-btn');
     const submitBtn = document.getElementById('submit-btn');
     const resultContainer = document.getElementById('result-container');
+    const questionGrid = document.getElementById('question-grid');
 
     // 상태 변수
     let currentQuestionIndex = 0;
@@ -40,6 +41,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 퀴즈 제목 설정
     quizTitleElement.textContent = quiz.title;
+
+    // 문항 네비게이션 그리드 초기화
+    function initQuestionGrid() {
+        questionGrid.innerHTML = '';
+        quiz.questions.forEach((_, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'question-nav-btn';
+            btn.textContent = index + 1;
+            btn.addEventListener('click', () => {
+                goToQuestion(index);
+            });
+            questionGrid.appendChild(btn);
+        });
+        updateQuestionGrid();
+    }
+
+    // 문항 네비게이션 그리드 업데이트
+    function updateQuestionGrid() {
+        const buttons = questionGrid.querySelectorAll('.question-nav-btn');
+        buttons.forEach((btn, index) => {
+            btn.classList.remove('answered', 'current', 'unanswered');
+            if (index === currentQuestionIndex) {
+                btn.classList.add('current');
+            } else if (userAnswers[index] !== null) {
+                btn.classList.add('answered');
+            } else {
+                btn.classList.add('unanswered');
+            }
+        });
+    }
+
+    // 특정 문항으로 이동
+    function goToQuestion(index) {
+        currentQuestionIndex = index;
+        renderQuestion();
+        updateProgress();
+        updateNavButtons();
+        updateQuestionGrid();
+    }
 
     // 문제 렌더링 함수
     function renderQuestion() {
@@ -122,6 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // 답안 저장
                 userAnswers[currentQuestionIndex] = index;
+                // 문항 네비게이션 업데이트
+                updateQuestionGrid();
             });
         });
 
@@ -165,20 +207,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 제출하기
     submitBtn.addEventListener('click', () => {
-        // 답하지 않은 문제 확인
-        const unanswered = userAnswers.findIndex(answer => answer === null);
-
-        if (unanswered !== -1) {
-            if (!confirm(`${unanswered + 1}번 문제에 답하지 않았습니다. 제출하시겠습니까?`)) {
-                return;
+        // 답하지 않은 문제들 확인
+        const unansweredIndexes = [];
+        userAnswers.forEach((answer, index) => {
+            if (answer === null) {
+                unansweredIndexes.push(index + 1);
             }
-        }
+        });
 
-        if (!confirm('정말 제출하시겠습니까?')) {
+        if (unansweredIndexes.length > 0) {
+            alert(`모든 문항에 답변해야 제출할 수 있습니다.\n\n미답변 문항: ${unansweredIndexes.join(', ')}번\n\n오른쪽 문항 목록에서 미답변 문항으로 이동할 수 있습니다.`);
             return;
         }
 
-        // 채점
+        if (!confirm('모든 문항에 답변하셨습니다. 정말 제출하시겠습니까?')) {
+            return;
+        }
+
+        // 제출
         showResult();
     });
 
@@ -242,6 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.quiz-solve-container').style.display = 'none';
     }
 
-    // 초기 문제 렌더링
+    // 초기화
+    initQuestionGrid();
     renderQuestion();
 });
